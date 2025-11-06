@@ -3,6 +3,26 @@ const std = @import("std");
 pub fn build(b: *std.Build) void {
     const gpa = std.heap.page_allocator;
 
+    // Options
+    const s_log_level = b.option(
+        []const u8,
+        "log_level",
+        "the log level",
+    ) orelse "info";
+    const log_level: std.log.Level = b: {
+        const eql = std.mem.eql;
+        break :b if (eql(u8, s_log_level, "debug"))
+            .debug
+        else if (eql(u8, s_log_level, "info"))
+            .info
+        else if (eql(u8, s_log_level, "warn"))
+            .warn
+        else if (eql(u8, s_log_level, "error"))
+            .err
+        else
+            @panic("Invalid log level");
+    };
+
     const optimize = b.standardOptimizeOption(.{});
 
     // Surtr Executable
@@ -18,6 +38,9 @@ pub fn build(b: *std.Build) void {
         }),
         .linkage = .static,
     });
+    const options = b.addOptions();
+    options.addOption(std.log.Level, "log_level", log_level);
+    surtr.root_module.addOptions("option", options);
     b.installArtifact(surtr);
 
     // EFI directory

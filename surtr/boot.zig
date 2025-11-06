@@ -1,15 +1,17 @@
 const std = @import("std");
 const uefi = std.os.uefi;
 
+const blog = @import("log.zig");
+const log = std.log.scoped(.surtr);
+//  Override the default log options
+pub const std_options = blog.default_log_options;
+
 fn _main() uefi.Error!void {
     const con_out = uefi.system_table.con_out orelse return error.Aborted;
     try con_out.clearScreen();
 
-    for ("Hello, world!\n") |b| {
-        if (try con_out.outputString(&[_:0]u16{b})) {} else {
-            return error.Aborted;
-        }
-    }
+    blog.init(con_out);
+    log.info("Initialized bootloader log.", .{});
 }
 
 pub fn main() uefi.Status {

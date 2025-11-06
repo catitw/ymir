@@ -36,7 +36,6 @@
             # see: https://discourse.nixosstag.fcio.net/t/tmux-bash-prompt-breaks-inside-of-flakes/60925/8
             export SHELL=${pkgs.lib.getExe pkgs.bashInteractive}
 
-            export LD=ld.lld
             export OVMF_CODE_FD=${pkgs.OVMF.fd}/FV/OVMF_CODE.fd
             export OVMF_VARS_FD=${pkgs.OVMF.fd}/FV/OVMF_VARS.fd
 
